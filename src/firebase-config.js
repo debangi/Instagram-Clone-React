@@ -2,16 +2,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { initializeApp } from '@firebase/app';
 import { getAuth } from 'firebase/auth';
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  writeBatch,
-  query,
-  getDocs,
-} from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 const firebaseConfig = {
   apiKey: 'AIzaSyA5yRsHiNNM51_Vq_SrC2TtkEiV-R6lD6E',
   authDomain: 'instagram-clone-429f7.firebaseapp.com',

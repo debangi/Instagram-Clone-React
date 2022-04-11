@@ -4,8 +4,15 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Input } from '@mui/material';
-import { db, auth, gePostsAndDocuments } from './firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { db, auth } from './firebase-config';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
+import { collection, onSnapshot } from 'firebase/firestore';
 
 import './App.css';
 
@@ -21,32 +28,62 @@ const style = {
   p: 4,
 };
 function App() {
-  const [posts, setPosts] = useState([
-    {
-      caption: 'Hey its a dog',
-      username: 'cosmic_stardust',
-      imageUrl:
-        'https://www.petmd.com/sites/default/files/2020-11/picture-of-golden-retriever-dog_0.jpg',
-    },
-    {
-      caption: 'Hey its react',
-      username: 'cosmic_sggh',
-      imageUrl: 'https://i.ytimg.com/vi/QVEp781Welg/maxresdefault.jpg',
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
   const [openSignUp, setOpenSignUp] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [currentLoggedInUser, setCurrentLoggedInUser] = useState({});
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setCurrentLoggedInUser(currentUser);
+    });
+  }, []);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'posts'), (snapshot) => {
+      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })));
+    });
+    return unsubscribe;
+  }, []);
 
   const handleClose = () => {
     setOpenSignIn(false);
     setOpenSignUp(false);
   };
-  const signUp = () => {};
-  const signIn = () => {};
-
+  const handleOpenSignUp = () => {
+    setOpenSignUp(true);
+  };
+  const handleOpenSignIn = () => {
+    setOpenSignIn(true);
+  };
+  const signUp = async (e) => {
+    e.preventDefault();
+    try {
+      const user = await createUserWithEmailAndPassword(auth, email, password);
+      updateProfile(auth.currentUser, {
+        displayName: username,
+      });
+      setCurrentLoggedInUser(user);
+      handleClose();
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const signIn = async (e) => {
+    e.preventDefault();
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      setCurrentLoggedInUser(user);
+      handleClose();
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const logout = async (e) => {
+    await signOut(auth);
+  };
   return (
     <div className='app'>
       {/* Caption */}
@@ -122,22 +159,23 @@ function App() {
           alt='logo'
         />
       </div>
-      {/* {currentUser ? (
+      {currentLoggedInUser ? (
         <Button onClick={logout}>Logout</Button>
       ) : (
         <div className='app__loginContainer'>
           <Button onClick={handleOpenSignUp}>Sign Up</Button>
           <Button onClick={handleOpenSignIn}>Sign In</Button>
         </div>
-      )} */}
+      )}
 
       <h1>HELLO WORLD</h1>
 
-      {posts.map((post) => (
+      {posts.map(({ id, data }) => (
         <Post
-          username={post.username}
-          caption={post.caption}
-          imageUrl={post.imageUrl}
+          key={id}
+          username={data.username}
+          caption={data.caption}
+          imageUrl={data.imageUrl}
         />
       ))}
     </div>
