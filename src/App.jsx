@@ -12,9 +12,10 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 
 import './App.css';
+import ImageUpload from './ImageUpload';
 
 const style = {
   position: 'absolute',
@@ -28,6 +29,7 @@ const style = {
   p: 4,
 };
 function App() {
+  ///// useState
   const [posts, setPosts] = useState([]);
   const [openSignUp, setOpenSignUp] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
@@ -36,18 +38,21 @@ function App() {
   const [username, setUsername] = useState('');
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState({});
 
+  ///// useEffect
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       setCurrentLoggedInUser(currentUser);
     });
-  }, []);
+  }, [currentLoggedInUser, username]);
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'posts'), (snapshot) => {
+    const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })));
     });
     return unsubscribe;
   }, []);
 
+  ///// handler functions
   const handleClose = () => {
     setOpenSignIn(false);
     setOpenSignUp(false);
@@ -61,12 +66,18 @@ function App() {
   const signUp = async (e) => {
     e.preventDefault();
     try {
+      handleClose();
       const user = await createUserWithEmailAndPassword(auth, email, password);
       updateProfile(auth.currentUser, {
         displayName: username,
+      }).then(() => {
+        setCurrentLoggedInUser(user);
+        console.log('user updated');
       });
       setCurrentLoggedInUser(user);
-      handleClose();
+      setEmail('');
+      setPassword('');
+      setUsername('');
     } catch (e) {
       console.log(e.message);
     }
@@ -74,9 +85,12 @@ function App() {
   const signIn = async (e) => {
     e.preventDefault();
     try {
+      handleClose();
       const user = await signInWithEmailAndPassword(auth, email, password);
       setCurrentLoggedInUser(user);
-      handleClose();
+      setEmail('');
+      setPassword('');
+      setUsername('');
     } catch (e) {
       console.log(e.message);
     }
@@ -84,11 +98,15 @@ function App() {
   const logout = async (e) => {
     await signOut(auth);
   };
+  console.log('rendering...');
   return (
     <div className='app'>
-      {/* Caption */}
-      {/* File Picker */}
-      {/* Post button */}
+      {currentLoggedInUser?.displayName ? (
+        <ImageUpload username={currentLoggedInUser.displayName} />
+      ) : (
+        <h3>Sorry! You need to login to upload!</h3>
+      )}
+
       <Modal open={openSignUp} onClose={handleClose}>
         <Box sx={style}>
           <form className='app__signup'>
