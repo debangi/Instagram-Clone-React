@@ -16,13 +16,11 @@ const ImageUpload = (props) => {
   const handleChange = (e) => {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
-      console.log(e.target.files[0]);
     }
   };
   const handleUpload = (image) => {
     const storageRef = ref(storage, `/images/${Date.now()}${image.name}`);
-    console.log(storageRef);
-    console.log(image);
+
     const uploadTask = uploadBytesResumable(storageRef, image);
 
     uploadTask.on(
@@ -45,7 +43,6 @@ const ImageUpload = (props) => {
             username: props.username,
           };
           await setDoc(docRef, payload);
-          console.log('uploaded');
         });
         setProgress(0);
         setCaption('');
@@ -56,6 +53,7 @@ const ImageUpload = (props) => {
 
   return (
     <div className='imageupload'>
+      <h3 className='imageupload__header'>Create Post</h3>
       <progress className='imageupload__progress' value={progress} max='100' />
       <Input
         type='text'
@@ -65,6 +63,7 @@ const ImageUpload = (props) => {
       />
       <input type='file' onChange={handleChange} />
       <Button
+        variant='outlined'
         className='imageupload__button'
         onClick={() => handleUpload(image)}
       >

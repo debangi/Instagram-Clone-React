@@ -2,9 +2,19 @@
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  width: 60%;
+  gap: 15px;
+  max-width: 450px;
   margin: 10px auto;
+  padding: 20px 30px;
+  border: 2px solid lightgray;
+  margin-bottom: 80px;
+}
+.imageupload__header {
+  text-align: center;
+  background-color: blue;
+  padding: 5px;
+  color: #fff;
+  border-radius: 10px;
 }
 .imageupload__progress {
   width: 100%;

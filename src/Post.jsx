@@ -13,6 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import './Post.css';
 
 import { db } from './firebase-config';
+import { deepPurple } from '@mui/material/colors';
 
 export const Post = ({ postId, username, caption, imageUrl, currentUser }) => {
   const [comments, setComments] = useState([]);
@@ -26,9 +27,6 @@ export const Post = ({ postId, username, caption, imageUrl, currentUser }) => {
       );
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setComments(
-          snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }))
-        );
-        console.log(
           snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }))
         );
       });
@@ -59,8 +57,9 @@ export const Post = ({ postId, username, caption, imageUrl, currentUser }) => {
       <div className='post__header'>
         <Avatar
           className='post__avatar'
+          sx={{ bgcolor: deepPurple[500] }}
           src='/broken-image.jpg'
-          alt='Debangi'
+          alt={username.toUpperCase()}
         />
         <h3>{username}</h3>
       </div>

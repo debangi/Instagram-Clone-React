@@ -72,7 +72,6 @@ function App() {
         displayName: username,
       }).then(() => {
         setCurrentLoggedInUser(user);
-        console.log('user updated');
       });
       setCurrentLoggedInUser(user);
       setEmail('');
@@ -98,7 +97,13 @@ function App() {
   const logout = async (e) => {
     await signOut(auth);
   };
-  console.log('rendering...');
+  const scrollToBottom = () => {
+    window.scroll({
+      top: document.body.offsetHeight,
+      left: 0,
+      behavior: 'smooth',
+    });
+  };
   return (
     <div className='app'>
       <Modal open={openSignUp} onClose={handleClose}>
@@ -171,7 +176,12 @@ function App() {
           alt='logo'
         />
         {currentLoggedInUser ? (
-          <Button onClick={logout}>Logout</Button>
+          <div>
+            <Button onClick={logout}>Logout</Button>
+            <Button variant='contained' onClick={scrollToBottom}>
+              POST
+            </Button>
+          </div>
         ) : (
           <div className='app__loginContainer'>
             <Button onClick={handleOpenSignUp}>Sign Up</Button>
