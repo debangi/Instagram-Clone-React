@@ -5,6 +5,8 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import React, { useState } from 'react';
 import { db, storage } from './firebase-config';
 
+import './ImageUpload.css';
+
 const ImageUpload = (props) => {
   const [image, setImage] = useState(null);
   // const [url, setUrl] = useState('');
@@ -54,19 +56,15 @@ const ImageUpload = (props) => {
   };
 
   return (
-    <div>
-      <h1>Image Upload</h1>
-      {/* Caption */}
-      <progress value={progress} max='100' />
+    <div className='imageupload'>
+      <progress className='imageupload__progress' value={progress} max='100' />
       <input
         type='text'
         placeholder='Enter a caption...'
         onChange={(e) => setCaption(e.target.value)}
         value={caption}
       />
-      {/* File Picker */}
       <input type='file' onChange={handleChange} />
-      {/* Post button */}
       <Button
         className='imageupload__button'
         onClick={() => handleUpload(image)}

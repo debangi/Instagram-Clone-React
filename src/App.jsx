@@ -101,12 +101,6 @@ function App() {
   console.log('rendering...');
   return (
     <div className='app'>
-      {currentLoggedInUser?.displayName ? (
-        <ImageUpload username={currentLoggedInUser.displayName} />
-      ) : (
-        <h3>Sorry! You need to login to upload!</h3>
-      )}
-
       <Modal open={openSignUp} onClose={handleClose}>
         <Box sx={style}>
           <form className='app__signup'>
@@ -176,15 +170,15 @@ function App() {
           src='https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png'
           alt='logo'
         />
+        {currentLoggedInUser ? (
+          <Button onClick={logout}>Logout</Button>
+        ) : (
+          <div className='app__loginContainer'>
+            <Button onClick={handleOpenSignUp}>Sign Up</Button>
+            <Button onClick={handleOpenSignIn}>Sign In</Button>
+          </div>
+        )}
       </div>
-      {currentLoggedInUser ? (
-        <Button onClick={logout}>Logout</Button>
-      ) : (
-        <div className='app__loginContainer'>
-          <Button onClick={handleOpenSignUp}>Sign Up</Button>
-          <Button onClick={handleOpenSignIn}>Sign In</Button>
-        </div>
-      )}
 
       <h1>HELLO WORLD</h1>
 
@@ -196,6 +190,11 @@ function App() {
           imageUrl={data.imageUrl}
         />
       ))}
+      {currentLoggedInUser?.displayName ? (
+        <ImageUpload username={currentLoggedInUser.displayName} />
+      ) : (
+        <h3>Sorry! You need to login to upload!</h3>
+      )}
     </div>
   );
 }
