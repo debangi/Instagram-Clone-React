@@ -20,3 +20,22 @@
   font-weight: normal;
   padding: 7px 15px;
 }
+.postComment__form {
+  display: flex;
+  margin-top: 10px;
+}
+.postComment__input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-top: 1px solid lightgray;
+}
+.postComment__button {
+  flex: 0;
+  border: none;
+  border-top: 1px solid lightgray;
+  color: #6082a3;
+}
+.post__comments {
+  padding: 7px 15px;
+}

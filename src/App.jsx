@@ -180,16 +180,19 @@ function App() {
         )}
       </div>
 
-      <h1>HELLO WORLD</h1>
+      <div className='app__posts'>
+        {posts.map(({ id, data }) => (
+          <Post
+            currentUser={currentLoggedInUser}
+            key={id}
+            postId={id}
+            username={data.username}
+            caption={data.caption}
+            imageUrl={data.imageUrl}
+          />
+        ))}
+      </div>
 
-      {posts.map(({ id, data }) => (
-        <Post
-          key={id}
-          username={data.username}
-          caption={data.caption}
-          imageUrl={data.imageUrl}
-        />
-      ))}
       {currentLoggedInUser?.displayName ? (
         <ImageUpload username={currentLoggedInUser.displayName} />
       ) : (

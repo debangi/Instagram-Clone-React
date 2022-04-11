@@ -1,6 +1,6 @@
 import firebase from 'firebase/compat/app';
-import { Button } from '@mui/material';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { Button, Input } from '@mui/material';
+import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import React, { useState } from 'react';
 import { db, storage } from './firebase-config';
@@ -20,7 +20,6 @@ const ImageUpload = (props) => {
     }
   };
   const handleUpload = (image) => {
-    const fileName = image.name;
     const storageRef = ref(storage, `/images/${Date.now()}${image.name}`);
     console.log(storageRef);
     console.log(image);
@@ -58,7 +57,7 @@ const ImageUpload = (props) => {
   return (
     <div className='imageupload'>
       <progress className='imageupload__progress' value={progress} max='100' />
-      <input
+      <Input
         type='text'
         placeholder='Enter a caption...'
         onChange={(e) => setCaption(e.target.value)}
