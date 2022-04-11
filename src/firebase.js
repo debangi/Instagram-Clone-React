@@ -1,5 +1,17 @@
-import firebase from 'firebase';
-
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import { initializeApp } from '@firebase/app';
+import { getAuth } from 'firebase/auth';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from 'firebase/firestore';
 const firebaseConfig = {
   apiKey: 'AIzaSyA5yRsHiNNM51_Vq_SrC2TtkEiV-R6lD6E',
   authDomain: 'instagram-clone-429f7.firebaseapp.com',
@@ -10,12 +22,9 @@ const firebaseConfig = {
   measurementId: 'G-YST1CBNQK4',
 };
 
-// Use this to initialize the firebase App
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
 
-// Use these for db & auth
-const db = firebaseApp.firestore();
-const auth = firebase.auth();
-const storage = firebase.storage();
-
-export { db, auth, storage };
+export const db = getFirestore();
+export const auth = getAuth(firebaseApp);
+// export const storage = firebase.storage();

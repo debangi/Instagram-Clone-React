@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import Post from './Post';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Input } from '@mui/material';
-import Post from './Post';
-import { db, auth } from './firebase';
+import { db, auth, gePostsAndDocuments } from './firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 import './App.css';
 
@@ -20,67 +21,37 @@ const style = {
   p: 4,
 };
 function App() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([
+    {
+      caption: 'Hey its a dog',
+      username: 'cosmic_stardust',
+      imageUrl:
+        'https://www.petmd.com/sites/default/files/2020-11/picture-of-golden-retriever-dog_0.jpg',
+    },
+    {
+      caption: 'Hey its react',
+      username: 'cosmic_sggh',
+      imageUrl: 'https://i.ytimg.com/vi/QVEp781Welg/maxresdefault.jpg',
+    },
+  ]);
   const [openSignUp, setOpenSignUp] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        console.log(authUser);
-        setUser(authUser);
-      } else {
-        setUser(null);
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [user, username]);
-  useEffect(() => {
-    db.collection('posts').onSnapshot((snapshot) => {
-      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })));
-    });
-  }, []);
-
-  const handleOpenSignUp = () => setOpenSignUp(true);
-  const handleOpenSignIn = () => setOpenSignIn(true);
   const handleClose = () => {
-    setOpenSignUp(false);
     setOpenSignIn(false);
+    setOpenSignUp(false);
   };
-
-  const signUp = (e) => {
-    e.preventDefault();
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((authUser) => {
-        handleClose();
-        return authUser.user.updateProfile({
-          displayName: username,
-        });
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorCode, errorMessage);
-      });
-  };
-  const signIn = (e) => {
-    e.preventDefault();
-    auth.signInWithEmailAndPassword(email, password).catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      alert(errorCode, errorMessage);
-    });
-  };
+  const signUp = () => {};
+  const signIn = () => {};
 
   return (
     <div className='app'>
+      {/* Caption */}
+      {/* File Picker */}
+      {/* Post button */}
       <Modal open={openSignUp} onClose={handleClose}>
         <Box sx={style}>
           <form className='app__signup'>
@@ -126,12 +97,6 @@ function App() {
               />
             </center>
             <Input
-              placeholder='username'
-              type='text'
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <Input
               placeholder='email'
               type='email'
               value={email}
@@ -157,23 +122,22 @@ function App() {
           alt='logo'
         />
       </div>
-      {user ? (
-        <Button onClick={() => auth.signOut()}>Logout</Button>
+      {/* {currentUser ? (
+        <Button onClick={logout}>Logout</Button>
       ) : (
         <div className='app__loginContainer'>
           <Button onClick={handleOpenSignUp}>Sign Up</Button>
           <Button onClick={handleOpenSignIn}>Sign In</Button>
         </div>
-      )}
+      )} */}
 
       <h1>HELLO WORLD</h1>
 
-      {posts.map(({ id, data }) => (
+      {posts.map((post) => (
         <Post
-          key={id}
-          username={data.username}
-          caption={data.caption}
-          imageUrl={data.imageUrl}
+          username={post.username}
+          caption={post.caption}
+          imageUrl={post.imageUrl}
         />
       ))}
     </div>
