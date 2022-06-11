@@ -44,6 +44,10 @@ const ImageUpload = (props) => {
           };
           await setDoc(docRef, payload);
         });
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
         setProgress(0);
         setCaption('');
         setImage(null);
